@@ -12,44 +12,52 @@
 
 #include "get_next_line_bonus.h"
 
-char	*read_all(int fd, char *all)
+char *read_all(int fd, char *all)
 {
-	char	*str;
-	int		n_readbytes;
+    char *str;           // Declare a character buffer for reading data from the file.
+    int n_readbytes;     // Declare an integer to store the number of bytes read.
 
-	str = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!str)
-		return (NULL);
-	n_readbytes = 1;
-	while (!ft_strchr(all, '\n') && n_readbytes != 0)
-	{
-		n_readbytes = read(fd, str, BUFFER_SIZE);
-		if (n_readbytes == -1)
-		{
-			free(str);
-			return (NULL);
-		}
-		str[n_readbytes] = '\0';
-		all = ft_strjoin(all, str);
-	}
-	free(str);
-	return (all);
+    str = malloc((BUFFER_SIZE + 1) * sizeof(char));  // Allocate memory for reading a chunk of data.
+    if (!str)
+        return (NULL);   // If memory allocation fails, return NULL.
+
+    n_readbytes = 1;     // Initialize the number of bytes read to 1 (to enter the loop).
+
+    while (ft_strchr(all, '\n') == 0 && n_readbytes != 0)
+    {
+        n_readbytes = read(fd, str, BUFFER_SIZE);  // Read data from the file descriptor into the buffer.
+        if (n_readbytes == -1)  // Check for read error.
+        {
+            free(str);       // Free the allocated memory in case of an error.
+            return (NULL);   // Return NULL to indicate an error.
+        }
+        str[n_readbytes] = '\0';  // Null-terminate the read data.
+        all = ft_strjoin(all, str);  // Concatenate the read data to the 'all' string.
+    }
+
+    free(str);          // Free the temporary buffer used for reading.
+
+    return (all);       // Return the 'all' string, which contains the concatenated data.
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	char		*line;
-	static char	*all[4096];
+    char *line;                // Declare a character pointer to store the next line read.
+    static char *all[4096];    // Declare an array of character pointers for file-specific storage.
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	all[fd] = read_all(fd, all[fd]);
-	if (!all[fd])
-		return (NULL);
-	line = ft_get_line(all[fd]);
-	all[fd] = remain(all[fd]);
-	return (line);
+    if (fd < 0 || BUFFER_SIZE <= 0)
+        return (0);            // Check for invalid file descriptor or buffer size.
+
+    all[fd] = read_all(fd, all[fd]);  // Read data from the file and append it to 'all' array for this file descriptor.
+    if (!all[fd])
+        return (NULL);         // If reading fails or reaches the end, return NULL.
+
+    line = ft_get_line(all[fd]);  // Extract a line from 'all' for this file descriptor.
+    all[fd] = remain(all[fd]);    // Update 'all' to store the remaining data for this file descriptor.
+
+    return (line);              // Return the extracted line.
 }
+
 
 // int	main(void)
 // {

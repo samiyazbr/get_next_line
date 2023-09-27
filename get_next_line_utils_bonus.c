@@ -70,56 +70,79 @@ char	*ft_strjoin(char *all, char *str)
 	return (join);
 }
 
-char	*ft_get_line(char *all)
+char *ft_get_line(char *all)
 {
-	int		i;
-	char	*str;
+    int i;
+    char *line;
 
-	i = 0;
-	if (!all[i])
-		return (NULL);
-	while (all[i] && all[i] != '\n')
-		i++;
-	str = (char *)malloc(sizeof(char) * (i + 2));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (all[i] && all[i] != '\n')
-	{
-		str[i] = all[i];
-		i++;
-	}
-	if (all[i] == '\n')
-	{
-		str[i] = all[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
+    i = 0;  // Initialize an index variable 'i' to zero.
+    if (!all[i])
+        return (NULL);  // Check if the input string is empty; if so, return NULL.
+
+    // Loop to find the length of the line or until a newline character is encountered.
+    while (all[i] && all[i] != '\n')
+        i++;
+
+    // Allocate memory for the 'line' variable to store the line and a newline character.
+    line = (char *)malloc(sizeof(char) * (i + 2));
+    if (!line)
+        return (NULL);  // Check if memory allocation fails; if so, return NULL.
+
+    i = 0;  // Reset the index 'i' to zero.
+
+    // Loop to copy characters from 'all' to 'line' until a newline character is encountered.
+    while (all[i] && all[i] != '\n')
+    {
+        line[i] = all[i];
+        i++;
+    }
+
+    if (all[i] == '\n')
+    {
+        line[i] = all[i];  // Include the newline character.
+        i++;
+    }
+
+    line[i] = '\0';  // Null-terminate the 'line' string.
+
+    return (line);  // Return the extracted line including the newline character.
 }
 
-char	*remain(char *all)
+char *remain(char *all)
 {
-	int		i;
-	int		j;
-	char	*str;
+    int i;
+    int j;
+    char *str;
 
-	i = 0;
-	while (all[i] && all[i] != '\n')
-		i++;
-	if (!all[i])
-	{
-		free(all);
-		return (NULL);
-	}
-	str = (char *)malloc(sizeof(char) * (ft_strlen(all) - i + 1));
-	if (!str)
-		return (NULL);
-	i++;
-	j = 0;
-	while (all[i])
-		str[j++] = all[i++];
-	str[j] = '\0';
-	free(all);
-	return (str);
+    i = 0;  // Initialize an index variable 'i' to zero.
+
+    // Loop to find the position of the first newline character or the end of the string.
+    while (all[i] && all[i] != '\n')
+        i++;
+
+    if (!all[i])  // Check if there is no newline character (end of file reached).
+    {
+        free(all);  // If there's no newline character, free the memory.
+        return (NULL);  // Return NULL to indicate the end of the file.
+    }
+
+    // Allocate memory for 'str' to store the remaining characters after the newline.
+    str = (char *)malloc(sizeof(char) * (ft_strlen(all) - i + 1));
+    if (!str)
+        return (NULL);  // Check if memory allocation fails; if so, return NULL.
+
+    i++;  // Increment 'i' to skip the newline character.
+
+    j = 0;  // Initialize an index variable 'j' to zero.
+
+    // Loop to copy the remaining characters after the newline to 'str'.
+    while (all[i])
+        str[j++] = all[i++];
+
+    str[j] = '\0';  // Null-terminate the 'str' string.
+
+    free(all);  // Free the memory used by the original 'all' string.
+
+    return (str);  // Return the remaining characters after the newline.
 }
+
